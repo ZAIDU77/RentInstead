@@ -1,0 +1,202 @@
+﻿.rent-footer {
+  clear: both;
+  width: 100%;
+  margin-top: 50px;
+  padding: 44px 5% 18px;
+  background: #0f1f46;
+  color: #e7edff;
+  font-family: "DM Sans", Arial, sans-serif;
+  box-sizing: border-box;
+}
+.rent-footer * { box-sizing: border-box; }
+.rent-footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 34px;
+  max-width: 1400px;
+  margin: auto;
+}
+.rent-footer h3 {
+  margin: 0 0 17px;
+  color: #fff;
+  font-size: 17px;
+}
+.rent-footer p {
+  color: #bdc9e6;
+  line-height: 1.7;
+  font-size: 14px;
+}
+.rent-footer-grid > div > a:not(.footer-logo):not(.footer-cta) {
+  display: block;
+  width: fit-content;
+  margin: 12px 0;
+  color: #bdc9e6;
+  text-decoration: none;
+  font-size: 14px;
+}
+.rent-footer a:hover { color: #fff !important; }
+.footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 23px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.footer-logo-icon {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  border-radius: 13px;
+  background: #2563eb;
+  color: white;
+}
+.footer-orange { color: #fb923c; }
+.footer-cta {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 11px 17px;
+  border-radius: 9px;
+  background: #f97316;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.footer-top-button {
+  display: block;
+  margin-top: 18px;
+  padding: 10px 14px;
+  border: 1px solid #7185b2;
+  border-radius: 8px;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+}
+.footer-top-button:hover { background: #243a69; }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 1400px;
+  margin: 35px auto 0;
+  padding-top: 18px;
+  border-top: 1px solid #304166;
+  color: #aebddd;
+  font-size: 12px;
+}
+@media(max-width: 850px) {
+  .rent-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media(max-width: 520px) {
+  .rent-footer { padding: 32px 20px 18px; }
+  .rent-footer-grid { grid-template-columns: 1fr; gap: 24px; }
+  .footer-bottom { flex-direction: column; }
+}
+
+/* RentInstead social media links */
+.footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.rent-footer .footer-socials a {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 12px;
+  border: 1px solid #52658e;
+  border-radius: 9px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.rent-footer .footer-socials a:hover {
+  background: #2563eb;
+  border-color: #60a5fa;
+}
+
+/* Social media logo and profile ID */
+.rent-footer .footer-socials {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.rent-footer .social-icon {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.rent-footer .social-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: #243657;
+    color: #ffffff;
+    font-size: 25px;
+    font-weight: 700;
+    transition: transform 0.2s ease;
+}
+
+.rent-footer .instagram .social-symbol {
+    background: #d62976;
+}
+
+.rent-footer .facebook .social-symbol {
+    background: #1877f2;
+}
+
+.rent-footer .x-social .social-symbol {
+    background: #000000;
+}
+
+.rent-footer .social-icon:hover .social-symbol {
+    transform: translateY(-3px);
+}
+
+.rent-footer .social-label {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+/* Compact social media icons */
+.rent-footer .footer-socials {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-top: 18px;
+}
+
+.rent-footer .footer-socials a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 32px;
+    color: #ffffff;
+    font-size: 23px;
+    text-decoration: none;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.rent-footer .footer-socials a:hover {
+    color: #60a5fa;
+    transform: translateY(-3px);
+}

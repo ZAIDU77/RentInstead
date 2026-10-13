@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | RentInstead</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Bricolage+Grotesque:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: #F5F7FB;
+            color: #172033;
+            font-family: "DM Sans", sans-serif;
+        }
+
+        header {
+            padding: 20px 7%;
+            background: white;
+            border-bottom: 1px solid #e5eaf2;
+        }
+
+        .brand {
+            color: #1D4ED8;
+            font: 700 26px "Bricolage Grotesque", sans-serif;
+            text-decoration: none;
+        }
+
+        main {
+            width: min(680px, 92%);
+            margin: 45px auto;
+        }
+
+        .intro { text-align: center; margin-bottom: 28px; }
+
+        h1 {
+            margin-bottom: 10px;
+            font: 700 36px "Bricolage Grotesque", sans-serif;
+        }
+
+        .intro p { color: #647084; line-height: 1.7; }
+
+        .card {
+            padding: 32px;
+            background: white;
+            border: 1px solid #e7ebf2;
+            border-radius: 16px;
+            box-shadow: 0 12px 35px rgba(23, 32, 51, .05);
+        }
+
+        label {
+            display: block;
+            margin: 18px 0 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d6deeb;
+            border-radius: 9px;
+            outline: none;
+            background: white;
+            color: #172033;
+            font: inherit;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #1D4ED8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, .1);
+        }
+
+        textarea { min-height: 145px; resize: vertical; }
+
+        button {
+            width: 100%;
+            margin-top: 24px;
+            padding: 14px;
+            border: 0;
+            border-radius: 9px;
+            background: #1D4ED8;
+            color: white;
+            font: 700 15px "DM Sans", sans-serif;
+            cursor: pointer;
+        }
+
+        button:hover { background: #1e40af; }
+
+        .back {
+            display: inline-block;
+            margin-top: 22px;
+            color: #1D4ED8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 520px) {
+            main { margin: 28px auto; }
+            .card { padding: 22px; }
+            h1 { font-size: 30px; }
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="/RentInstead/favicon.svg">
+</head>
+<body>
+    <header>
+        <a class="brand" href="../index.html">RentInstead</a>
+    </header>
+
+    <main>
+        <div class="intro">
+            <h1>Contact Us</h1>
+            <p>Questions, feedback, ya koi problem? Humein message bhejo.</p>
+        </div>
+
+        <section class="card">
+            <form action="../contact" method="post">
+                <label for="name">Your name</label>
+                <input id="name" name="name" type="text"
+                       maxlength="100" autocomplete="name" required>
+
+                <label for="email">Email address</label>
+                <input id="email" name="email" type="email"
+                       maxlength="254" autocomplete="email" required>
+
+                <label for="subject">Subject</label>
+                <input id="subject" name="subject" type="text"
+                       maxlength="150" required>
+
+                <label for="message">Message</label>
+                <textarea id="message" name="message"
+                          maxlength="5000" required></textarea>
+
+                <button type="submit">Send Message</button>
+            </form>
+
+            <a class="back" href="../index.html">← Back to Home</a>
+        </section>
+    </main>
+</body>
+</html>

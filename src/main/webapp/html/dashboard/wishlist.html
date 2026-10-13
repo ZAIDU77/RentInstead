@@ -1,0 +1,393 @@
+<!-- ```html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist | RentInstead</title>
+
+    <base href="../../">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Navbar CSS -->
+    <link rel="stylesheet" href="/RentInstead/css/navbar.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            background: #f5f7fb;
+            color: #172554;
+        }
+
+        .page-header {
+            padding: 36px 0;
+            background: #eef2ff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .page-header h1 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(28px, 4vw, 38px);
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .page-header p {
+            margin: 8px 0 0;
+            color: #64748b;
+        }
+
+        .wishlist-page {
+            min-height: 65vh;
+            padding: 35px 0 60px;
+        }
+
+        .wishlist-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .wishlist-toolbar h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .wishlist-count {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .wishlist-card {
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .wishlist-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px #0f172a0d;
+        }
+
+        .item-image {
+            position: relative;
+            display: grid;
+            place-items: center;
+            height: 190px;
+            background: #eef2ff;
+        }
+
+        .item-image > i {
+            color: #1d4ed8;
+            font-size: 65px;
+        }
+
+        .category-tag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: white;
+            color: #1d4ed8;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: grid;
+            place-items: center;
+            width: 37px;
+            height: 37px;
+            border: 0;
+            border-radius: 50%;
+            background: white;
+            color: #dc2626;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .remove-btn:hover {
+            background: #fee2e2;
+        }
+
+        .item-details {
+            padding: 18px;
+        }
+
+        .item-details h3 {
+            margin-bottom: 7px;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .item-location {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .item-price {
+            color: #1d4ed8;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .item-price small {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .availability {
+            color: #15803d;
+            font-size: 12px;
+        }
+
+        .rent-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 11px;
+            border: 0;
+            border-radius: 9px;
+            background: #1d4ed8;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s;
+        }
+
+        .rent-btn:hover {
+            background: #1e40af;
+        }
+
+        .empty-state {
+            display: none;
+            padding: 65px 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            text-align: center;
+        }
+
+        .empty-state > i {
+            color: #94a3b8;
+            font-size: 55px;
+        }
+
+        .empty-state h3 {
+            margin-top: 15px;
+            font-weight: 800;
+        }
+
+        .empty-state p {
+            color: #64748b;
+        }
+
+        .browse-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 18px;
+            border-radius: 9px;
+            background: #1d4ed8;
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .browse-btn:hover {
+            background: #1e40af;
+            color: white;
+        }
+
+        footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .wishlist-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 520px) {
+            .wishlist-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .item-image {
+                height: 210px;
+            }
+
+            .wishlist-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <link rel="icon" type="image/svg+xml" href="/RentInstead/favicon.svg">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <header id="siteNavbar"></header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1><i class="bi bi-heart-fill text-danger me-2"></i>My Wishlist</h1>
+            <p>Keep your favourite items close and find them when you need them.</p>
+        </div>
+    </section>
+
+    <main class="wishlist-page">
+        <div class="container">
+
+            <div class="wishlist-toolbar">
+                <h2>Your favourite items</h2>
+                <span class="wishlist-count" id="wishlistCount"></span>
+            </div>
+
+            <section class="wishlist-grid" id="wishlistGrid">
+
+                <article class="wishlist-card" data-item-id="dsa-book">
+                    <div class="item-image">
+                        <span class="category-tag">Books</span>
+                        <button class="remove-btn" type="button" aria-label="Remove DSA book">
+                            <i class="bi bi-heart-fill"></i>
+                        </button>
+                        <i class="bi bi-book-half"></i>
+                    </div>
+                    <div class="item-details">
+                        <h3>DSA Complete Guide</h3>
+                        <p class="item-location"><i class="bi bi-geo-alt"></i> Campus Library</p>
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <span class="item-price">₹20 <small>/day</small></span>
+                            <span class="availability"><i class="bi bi-check-circle"></i> Available</span>
+                        </div>
+                        <button class="rent-btn" type="button" data-item="DSA Complete Guide">View item</button>
+                    </div>
+                </article>
+
+                <article class="wishlist-card" data-item-id="camera">
+                    <div class="item-image">
+                        <span class="category-tag">Cameras</span>
+                        <button class="remove-btn" type="button" aria-label="Remove camera">
+                            <i class="bi bi-heart-fill"></i>
+                        </button>
+                        <i class="bi bi-camera-fill"></i>
+                    </div>
+                    <div class="item-details">
+                        <h3>Canon Digital Camera</h3>
+                        <p class="item-location"><i class="bi bi-geo-alt"></i> Student Housing</p>
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <span class="item-price">₹350 <small>/day</small></span>
+                            <span class="availability"><i class="bi bi-check-circle"></i> Available</span>
+                        </div>
+                        <button class="rent-btn" type="button" data-item="Canon Digital Camera">View item</button>
+                    </div>
+                </article>
+
+                <article class="wishlist-card" data-item-id="cycle">
+                    <div class="item-image">
+                        <span class="category-tag">Cycles</span>
+                        <button class="remove-btn" type="button" aria-label="Remove bicycle">
+                            <i class="bi bi-heart-fill"></i>
+                        </button>
+                        <i class="bi bi-bicycle"></i>
+                    </div>
+                    <div class="item-details">
+                        <h3>Mountain Bicycle</h3>
+                        <p class="item-location"><i class="bi bi-geo-alt"></i> Near Main Gate</p>
+                        <div class="d-flex justify-content-between align-items-center gap-2">
+                            <span class="item-price">₹80 <small>/day</small></span>
+                            <span class="availability"><i class="bi bi-check-circle"></i> Available</span>
+                        </div>
+                        <button class="rent-btn" type="button" data-item="Mountain Bicycle">View item</button>
+                    </div>
+                </article>
+
+            </section>
+
+            <section class="empty-state" id="emptyState">
+                <i class="bi bi-heart"></i>
+                <h3>Your wishlist is empty</h3>
+                <p>Browse items and save the ones you like.</p>
+                <a href="html/items/browse.html" class="browse-btn">Explore items</a>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>© 2026 RentInstead. Access instead of ownership.</footer>
+
+    <!-- Navbar JS: absolute path -->
+    <script src="/RentInstead/js/navbar.js" defer></script>
+
+    <script>
+        const wishlistGrid = document.getElementById("wishlistGrid");
+        const wishlistCount = document.getElementById("wishlistCount");
+        const emptyState = document.getElementById("emptyState");
+
+        function updateWishlist() {
+            const cards = wishlistGrid.querySelectorAll(".wishlist-card");
+            const count = cards.length;
+
+            wishlistCount.textContent =
+                count + (count === 1 ? " saved item" : " saved items");
+
+            wishlistGrid.style.display = count === 0 ? "none" : "grid";
+            emptyState.style.display = count === 0 ? "block" : "none";
+        }
+
+        document.querySelectorAll(".remove-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                const card = button.closest(".wishlist-card");
+                if (card) {
+                    card.remove();
+                    updateWishlist();
+                }
+            });
+        });
+
+        document.querySelectorAll(".rent-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                alert(
+                    button.dataset.item +
+                    "\n\nItem details and booking will be connected to the backend later."
+                );
+            });
+        });
+
+        updateWishlist();
+    </script>
+
+</body>
+</html>

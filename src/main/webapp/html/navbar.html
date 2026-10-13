@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentInstead Navbar</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+
+    <!-- Navbar CSS -->
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="icon" type="image/svg+xml" href="/RentInstead/favicon.svg">
+</head>
+<body>
+
+<nav class="rent-navbar">
+    <div class="navbar-container">
+
+        <!-- Logo -->
+        <a href="/RentInstead/" class="rent-logo">
+            <span class="logo-icon">
+                <i class="bi bi-house-heart-fill"></i>
+            </span>
+
+            <span class="logo-text">
+                Rent<span>Instead</span>
+                <small>Access instead of ownership</small>
+            </span>
+        </a>
+
+        <!-- Mobile Menu Button -->
+        <button class="menu-toggle" id="menuToggle"
+                type="button"
+                aria-label="Open navigation menu"
+                aria-expanded="false">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- Navigation -->
+        <div class="navbar-content" id="navbarContent">
+
+            <ul class="nav-links">
+                <li>
+                    <a class="nav-link" href="/RentInstead/">
+                        <i class="bi bi-house-door"></i> Home
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link" href="/RentInstead/html/items/browse.html">
+                        <i class="bi bi-grid"></i> Browse
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link" href="/RentInstead/#how-it-works">
+                        <i class="bi bi-lightbulb"></i> How it works
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link" href="/RentInstead/html/items/add-item.html">
+                        <i class="bi bi-plus-circle"></i> List an item
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Search -->
+            <form class="rent-search" id="navbarSearchForm">
+                <i class="bi bi-search"></i>
+
+                <input type="search"
+                       id="navbarSearch"
+                       placeholder="Search books, cameras, cycles..."
+                       aria-label="Search items"
+                       autocomplete="off">
+
+                <button type="button"
+                        id="clearSearch"
+                        aria-label="Clear search"
+                        hidden>
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </form>
+
+            <!-- Quick Actions -->
+            <div class="nav-quick-actions">
+                <a href="/RentInstead/html/dashboard/wishlist.html"
+                   class="icon-link"
+                   aria-label="Wishlist"
+                   title="Wishlist">
+                    <i class="bi bi-heart"></i>
+                </a>
+
+                <a href="/RentInstead/html/dashboard/notifications.html"
+                   class="icon-link"
+                   aria-label="Notifications"
+                   title="Notifications">
+                    <i class="bi bi-bell"></i>
+                </a>
+            </div>
+
+            <!-- Login and Register -->
+            <div class="auth-actions" id="authActions">
+                <a href="/RentInstead/html/auth/login.html" class="btn-login">
+                    Login
+                </a>
+
+                <a href="/RentInstead/html/auth/register.html" class="btn-register">
+                    Register
+                </a>
+            </div>
+
+            <!-- Logged-in User -->
+            <div class="user-menu" id="userMenu" hidden>
+                <button type="button"
+                        class="user-menu-button"
+                        id="userMenuButton"
+                        aria-expanded="false">
+
+                    <span class="user-avatar" id="userAvatar">U</span>
+                    <span id="userFirstName">User</span>
+                    <i class="bi bi-chevron-down"></i>
+                </button>
+
+                <div class="user-dropdown" id="userDropdown" hidden>
+                    <a href="/RentInstead/html/dashboard/profile.html">
+                        <i class="bi bi-person"></i> My Profile
+                    </a>
+
+                    <a href="/RentInstead/html/rentals/my-rentals.html">
+                        <i class="bi bi-bag"></i> My Rentals
+                    </a>
+
+                    <button type="button" id="logoutButton">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+<!-- Navbar JavaScript -->
+<script src="../js/navbar.js"></script>
+
+</body>
+</html>
+
+

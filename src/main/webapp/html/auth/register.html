@@ -1,0 +1,482 @@
+<!-- ```html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | RentInstead</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            background: #f5f7fb;
+            color: #172554;
+        }
+
+        .auth-layout {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .auth-visual {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 45px 8%;
+            background: linear-gradient(145deg, #1d4ed8, #172554);
+            color: white;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            display: grid;
+            place-items: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 13px;
+            background: #ffffff20;
+        }
+
+        .brand span span { color: #fdba74; }
+
+        .visual-content {
+            max-width: 480px;
+            margin: 50px auto;
+        }
+
+        .illustration {
+            font-size: clamp(80px, 12vw, 150px);
+            margin-bottom: 25px;
+            color: #bfdbfe;
+        }
+
+        .visual-content h1 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            line-height: 1.15;
+        }
+
+        .visual-content p {
+            margin-top: 18px;
+            color: #dbeafe;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .visual-footer {
+            color: #dbeafe;
+            font-size: 13px;
+        }
+
+        .auth-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 500px;
+            padding: 35px;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 20px 60px #0f172a0b;
+        }
+
+        .mobile-brand { display: none; }
+
+        .auth-card h2 {
+            margin-bottom: 8px;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 31px;
+            font-weight: 800;
+        }
+
+        .auth-subtitle {
+            margin-bottom: 24px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .form-label {
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .input-wrap {
+            display: flex;
+            align-items: center;
+            min-height: 47px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .input-wrap:focus-within {
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px #1d4ed81a;
+        }
+
+        .input-icon {
+            padding-left: 13px;
+            color: #64748b;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            min-width: 0;
+            padding: 11px 12px;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #172554;
+            font: inherit;
+        }
+
+        .password-toggle {
+            padding: 10px 12px;
+            border: 0;
+            background: transparent;
+            color: #64748b;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 13px;
+            border: 0;
+            border-radius: 10px;
+            background: #1d4ed8;
+            color: white;
+            font-weight: 700;
+        }
+
+        .submit-btn:hover { background: #1e40af; }
+
+        .submit-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .login-prompt {
+            margin: 22px 0 0;
+            color: #64748b;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .text-link {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .text-link:hover { text-decoration: underline; }
+
+        .security-note {
+            display: flex;
+            gap: 9px;
+            margin-top: 22px;
+            padding: 12px;
+            border-radius: 9px;
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .message {
+            display: none;
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 9px;
+            font-size: 13px;
+        }
+
+        .message a {
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 850px) {
+            .auth-layout { grid-template-columns: 1fr; }
+            .auth-visual { display: none; }
+            .auth-panel { min-height: 100vh; padding: 24px 16px; }
+            .auth-card { max-width: 460px; padding: 30px 24px; }
+
+            .mobile-brand {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 25px;
+            }
+
+            .mobile-brand .brand { color: #172554; }
+
+            .mobile-brand .brand-icon {
+                background: #dbeafe;
+                color: #1d4ed8;
+            }
+
+            .mobile-brand .brand span span { color: #c2410c; }
+        }
+
+        @media (max-width: 400px) {
+            .auth-card { padding: 24px 18px; }
+            .auth-card h2 { font-size: 27px; }
+        }
+    </style>
+</head>
+
+<body>
+<div class="auth-layout">
+
+    <aside class="auth-visual">
+        <a class="brand" href="/RentInstead/">
+            <span class="brand-icon"><i class="bi bi-house-heart-fill"></i></span>
+            <span>Rent<span>Instead</span></span>
+        </a>
+
+        <div class="visual-content">
+            <div class="illustration"><i class="bi bi-people-fill"></i></div>
+            <h1>Share more.<br>Spend smarter.</h1>
+            <p>
+                Join your campus rental community.
+                Find what you need, or earn by sharing things you own.
+            </p>
+        </div>
+
+        <div class="visual-footer">
+            <i class="bi bi-shield-check"></i>
+            Start your smarter rental journey.
+        </div>
+    </aside>
+
+    <main class="auth-panel">
+        <section class="auth-card">
+
+            <div class="mobile-brand">
+                <a class="brand" href="/RentInstead/">
+                    <span class="brand-icon"><i class="bi bi-house-heart-fill"></i></span>
+                    <span>Rent<span>Instead</span></span>
+                </a>
+            </div>
+
+            <h2>Create account</h2>
+            <p class="auth-subtitle">
+                Register using your name, mobile number and password.
+            </p>
+
+            <!-- Messages: duplicate account and validation -->
+            <div id="formMessage"
+                 class="message"
+                 role="alert"
+                 aria-live="polite"></div>
+
+            <form id="registerForm"
+                  action="/RentInstead/register"
+                  method="post">
+
+                <div class="mb-3">
+                    <label class="form-label" for="fullName">Full name</label>
+                    <div class="input-wrap">
+                        <span class="input-icon"><i class="bi bi-person"></i></span>
+                        <input type="text"
+                               id="fullName"
+                               name="fullName"
+                               placeholder="Enter your full name"
+                               autocomplete="name"
+                               minlength="2"
+                               maxlength="100"
+                               required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="phone">Mobile number</label>
+                    <div class="input-wrap">
+                        <span class="input-icon"><i class="bi bi-telephone"></i></span>
+                        <span class="ps-2 text-secondary">+91</span>
+                        <input type="tel"
+                               id="phone"
+                               name="phone"
+                               placeholder="10-digit mobile number"
+                               inputmode="numeric"
+                               autocomplete="tel-national"
+                               maxlength="10"
+                               pattern="[6-9][0-9]{9}"
+                               required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="password">Create password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon"><i class="bi bi-lock"></i></span>
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               placeholder="At least 8 characters"
+                               autocomplete="new-password"
+                               minlength="8"
+                               maxlength="128"
+                               required>
+                        <button class="password-toggle"
+                                type="button"
+                                data-toggle="password"
+                                aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="confirmPassword">Confirm password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon"><i class="bi bi-shield-lock"></i></span>
+                        <input type="password"
+                               id="confirmPassword"
+                               name="confirmPassword"
+                               placeholder="Enter password again"
+                               autocomplete="new-password"
+                               minlength="8"
+                               maxlength="128"
+                               required>
+                        <button class="password-toggle"
+                                type="button"
+                                data-toggle="confirmPassword"
+                                aria-label="Show confirm password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="registerBtn" class="submit-btn">
+                    Create Account <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+            </form>
+
+            <p class="login-prompt">
+                Already have an account?
+                <a href="login.html" class="text-link">Log in</a>
+            </p>
+
+            <div class="security-note">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>
+                    Your password is protected by the RentInstead backend.
+                    No SMS OTP is required for registration.
+                </span>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<script>
+    const registerForm = document.getElementById("registerForm");
+    const formMessage = document.getElementById("formMessage");
+    const registerBtn = document.getElementById("registerBtn");
+
+    function showMessage(message, type) {
+        formMessage.style.display = "block";
+        formMessage.className = "message alert alert-" + type;
+        formMessage.textContent = message;
+    }
+
+    // Show an informative message if this phone number is already registered.
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("error") === "exists") {
+        formMessage.style.display = "block";
+        formMessage.className = "message alert alert-warning";
+        formMessage.innerHTML =
+            ' <strong>Account already exists!</strong> ' +
+            'This mobile number is already registered. ' +
+            '<a href="login.html" class="alert-link">Login here</a>.';
+    }
+
+    // Show or hide password.
+    document.querySelectorAll("[data-toggle]").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const input = document.getElementById(button.dataset.toggle);
+            const show = input.type === "password";
+
+            input.type = show ? "text" : "password";
+
+            button.innerHTML = show
+                ? '<i class="bi bi-eye-slash"></i>'
+                : '<i class="bi bi-eye"></i>';
+
+            button.setAttribute(
+                "aria-label",
+                show ? "Hide password" : "Show password"
+            );
+        });
+    });
+
+    // Validate fields before submitting to the servlet.
+    registerForm.addEventListener("submit", function (event) {
+        const phone = document.getElementById("phone").value.trim();
+        const password = document.getElementById("password").value;
+        const confirmPassword =
+            document.getElementById("confirmPassword").value;
+        const fullName = document.getElementById("fullName").value.trim();
+
+        if (fullName.length < 2 || fullName.length > 100) {
+            event.preventDefault();
+            showMessage("Please enter a valid full name.", "danger");
+            return;
+        }
+
+        if (!/^[6-9][0-9]{9}$/.test(phone)) {
+            event.preventDefault();
+            showMessage(
+                "Enter a valid 10-digit Indian mobile number.",
+                "danger"
+            );
+            return;
+        }
+
+        if (password.length < 8 || password.length > 128) {
+            event.preventDefault();
+            showMessage(
+                "Password must contain 8 to 128 characters.",
+                "danger"
+            );
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            showMessage("Passwords do not match.", "danger");
+            return;
+        }
+
+        registerBtn.disabled = true;
+        registerBtn.textContent = "Creating account...";
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List an Item | RentInstead</title>
+
+    <base href="../../">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Bricolage+Grotesque:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            background: #f5f7fb;
+            color: #172554;
+        }
+
+        #siteNavbar {
+            position: relative;
+            z-index: 1000;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        #siteNavbar ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #siteNavbar a { text-decoration: none; }
+
+        .page-header {
+            padding: 38px 0;
+            background: #eef2ff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            color: #172554;
+        }
+
+        .page-header p {
+            margin: 10px 0 0;
+            color: #64748b;
+        }
+
+        .form-section { padding: 35px 0 60px; }
+
+        .listing-card {
+            max-width: 850px;
+            margin: auto;
+            padding: clamp(20px, 4vw, 38px);
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 15px 45px rgba(15, 23, 42, .05);
+        }
+
+        .section-title {
+            margin-bottom: 22px;
+            font-size: 19px;
+            font-weight: 800;
+            color: #172554;
+        }
+
+        .form-label {
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .form-control, .form-select {
+            min-height: 47px;
+            border-color: #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+        }
+
+        textarea.form-control {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .help-text {
+            margin-top: 7px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .price-input { position: relative; }
+
+        .price-input .currency {
+            position: absolute;
+            top: 50%;
+            left: 14px;
+            transform: translateY(-50%);
+            z-index: 2;
+            color: #64748b;
+        }
+
+        .price-input input { padding-left: 32px; }
+
+        .location-panel {
+            padding: 18px;
+            border: 1px solid #dbeafe;
+            border-radius: 12px;
+            background: #f8fbff;
+        }
+
+        .location-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .location-actions .btn {
+            min-height: 44px;
+            border-radius: 9px;
+            font-weight: 600;
+        }
+
+        #locationMessage {
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        #locationMap {
+            width: 100%;
+            height: 300px;
+            margin-top: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        .selected-location {
+            padding: 12px;
+            border-radius: 9px;
+            background: #dbeafe;
+            color: #1e40af;
+            overflow-wrap: anywhere;
+        }
+
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 170px;
+            padding: 20px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            background: #f8fafc;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .upload-area i {
+            margin-bottom: 10px;
+            color: #2563eb;
+            font-size: 35px;
+        }
+
+        .upload-area strong { font-size: 14px; }
+
+        .upload-area span {
+            margin-top: 6px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        #imagePreview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .primary-btn, .secondary-btn {
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .primary-btn {
+            border: 0;
+            background: #1d4ed8;
+            color: #fff;
+        }
+
+        .primary-btn:hover { background: #1e40af; }
+
+        .primary-btn:disabled {
+            opacity: .65;
+            cursor: not-allowed;
+        }
+
+        .secondary-btn {
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #334155;
+        }
+
+        .message {
+            display: none;
+            margin-bottom: 20px;
+            padding: 13px;
+            border-radius: 9px;
+            font-size: 14px;
+            white-space: pre-line;
+        }
+
+        footer {
+            padding: 20px;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        [hidden] { display: none !important; }
+
+        @media (max-width: 768px) {
+            .page-header { padding: 28px 0; }
+            .form-section { padding: 24px 0 40px; }
+            .location-actions { flex-direction: column; }
+            .location-actions .btn { width: 100%; }
+            #locationMap { height: 260px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header id="siteNavbar"></header>
+
+<section class="page-header">
+    <div class="container">
+        <h1>List an item for rent</h1>
+        <p>Share what you own and help someone in your community.</p>
+    </div>
+</section>
+
+<main class="form-section">
+    <div class="container">
+
+        <form class="listing-card"
+              id="addItemForm"
+              action="add-item"
+              method="post"
+              enctype="multipart/form-data">
+
+            <div id="formMessage" class="message"
+                 role="status" aria-live="polite"></div>
+
+            <h2 class="section-title">
+                <i class="bi bi-box-seam me-2 text-primary"></i>
+                Item details
+            </h2>
+
+            <div class="mb-4">
+                <label for="itemTitle" class="form-label">Item title *</label>
+                <input type="text" class="form-control"
+                       id="itemTitle" name="itemTitle"
+                       minlength="3" maxlength="150"
+                       placeholder="e.g. HP Laptop, Java Programming Book"
+                       required>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label for="category" class="form-label">Category *</label>
+                    <select class="form-select" id="category"
+                            name="category" required>
+                        <option value="">Select category</option>
+                        <option value="Books">Books</option>
+                        <option value="Cameras">Cameras</option>
+                        <option value="Cycles">Cycles</option>
+                        <option value="Laptops">Laptops</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Sports">Sports equipment</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="condition" class="form-label">Item condition *</label>
+                    <select class="form-select" id="condition"
+                            name="condition" required>
+                        <option value="">Select condition</option>
+                        <option value="New">New</option>
+                        <option value="Like New">Like New</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="form-label">Description *</label>
+                <textarea class="form-control"
+                          id="description" name="description"
+                          minlength="10" maxlength="2000"
+                          placeholder="Describe your item and its features..."
+                          required></textarea>
+            </div>
+
+            <hr class="my-4">
+
+            <h2 class="section-title">
+                <i class="bi bi-currency-rupee me-2 text-primary"></i>
+                Rental price
+            </h2>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label for="price" class="form-label">Price per day (₹) *</label>
+                    <div class="price-input">
+                        <span class="currency">₹</span>
+                        <input type="number" class="form-control"
+                               id="price" name="price"
+                               min="0.01" max="100000" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="deposit" class="form-label">Security deposit (₹)</label>
+                    <div class="price-input">
+                        <span class="currency">₹</span>
+                        <input type="number" class="form-control"
+                               id="deposit" name="deposit"
+                               min="0" max="1000000" step="0.01" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <h2 class="section-title">
+                <i class="bi bi-geo-alt me-2 text-primary"></i>
+                Pickup location
+            </h2>
+
+            <div class="location-panel mb-4">
+                <div class="location-actions mb-3">
+                    <button type="button" class="btn btn-primary"
+                            id="currentLocationBtn">
+                        <i class="bi bi-crosshair me-1"></i>
+                        Use Current Location
+                    </button>
+
+                    <button type="button" class="btn btn-outline-primary"
+                            id="anotherLocationBtn">
+                        <i class="bi bi-map me-1"></i>
+                        Choose Another Location
+                    </button>
+                </div>
+
+                <div id="locationMessage" class="mb-3"
+                     role="status" aria-live="polite"></div>
+
+                <div id="manualLocationPanel" hidden>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">City / Area *</label>
+                        <input type="text" class="form-control"
+                               id="location" name="location"
+                               minlength="3" maxlength="150" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="pincode" class="form-label">PIN code *</label>
+                        <input type="text" class="form-control"
+                               id="pincode" name="pincode"
+                               inputmode="numeric" autocomplete="postal-code"
+                               pattern="[0-9]{6}" maxlength="6" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="directions" class="form-label">
+                            Landmark / Directions *
+                        </label>
+                        <textarea class="form-control"
+                                  id="directions" name="directions"
+                                  minlength="5" maxlength="500"
+                                  rows="3" required></textarea>
+                    </div>
+
+                    <button type="button" id="searchLocationBtn"
+                            class="btn btn-outline-primary btn-sm mb-2">
+                        Search City / PIN
+                    </button>
+
+                    <button type="button" id="showMapBtn"
+                            class="btn btn-outline-secondary btn-sm mb-2">
+                        Choose on Map
+                    </button>
+
+                    <button type="button" id="hideMapBtn"
+                            class="btn btn-outline-secondary btn-sm mb-2"
+                            hidden>
+                        Hide Map
+                    </button>
+
+                    <div id="locationMapPanel" hidden>
+                        <p class="help-text mt-3">
+                            Click the map to select the pickup point.
+                        </p>
+                        <div id="locationMap"></div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+
+                <div id="selectedLocation"
+                     class="selected-location mt-3" hidden></div>
+            </div>
+
+            <hr class="my-4">
+
+            <h2 class="section-title">
+                <i class="bi bi-images me-2 text-primary"></i>
+                Item photo
+            </h2>
+
+            <label for="itemImages" class="upload-area">
+                <i class="bi bi-cloud-arrow-up"></i>
+                <strong>Click to upload a photo</strong>
+                <span>JPEG, PNG or WebP · Maximum 5 MB</span>
+            </label>
+
+            <input type="file" id="itemImages" name="itemImages"
+                   accept="image/jpeg,image/png,image/webp" hidden>
+
+            <div id="imagePreview"></div>
+
+            <div class="help-text mb-4">
+                Your selected photo will be submitted with the listing.
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between gap-3 mt-4">
+                <button type="reset" class="secondary-btn">Clear form</button>
+                <button type="submit" class="primary-btn" id="submitBtn">
+                    Save Listing <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+<footer>© 2026 RentInstead. Access instead of ownership.</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/navbar.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("addItemForm");
+    const message = document.getElementById("formMessage");
+    const locationMessage = document.getElementById("locationMessage");
+    const manualPanel = document.getElementById("manualLocationPanel");
+
+    const locationInput = document.getElementById("location");
+    const pinInput = document.getElementById("pincode");
+    const directionsInput = document.getElementById("directions");
+    const latInput = document.getElementById("latitude");
+    const lonInput = document.getElementById("longitude");
+
+    const selectedLocation = document.getElementById("selectedLocation");
+    const currentBtn = document.getElementById("currentLocationBtn");
+    const anotherBtn = document.getElementById("anotherLocationBtn");
+    const searchBtn = document.getElementById("searchLocationBtn");
+    const showMapBtn = document.getElementById("showMapBtn");
+    const hideMapBtn = document.getElementById("hideMapBtn");
+    const mapPanel = document.getElementById("locationMapPanel");
+
+    const imageInput = document.getElementById("itemImages");
+    const imagePreview = document.getElementById("imagePreview");
+    const submitBtn = document.getElementById("submitBtn");
+
+    let map = null;
+    let marker = null;
+    let locationSelected = false;
+    let previewUrl = null;
+
+    function showMessage(text, type) {
+        message.style.display = "block";
+        message.className = "message alert alert-" + type;
+        message.textContent = text;
+    }
+
+    function showLocationMessage(text, type) {
+        locationMessage.textContent = text;
+        locationMessage.className = "mb-3" + (type ? " " + type : "");
+    }
+
+    function clearCoordinates() {
+        latInput.value = "";
+        lonInput.value = "";
+        locationSelected = false;
+        selectedLocation.hidden = true;
+    }
+
+    function setLocation(label, lat, lon) {
+        latInput.value = String(lat);
+        lonInput.value = String(lon);
+        locationSelected = true;
+        selectedLocation.textContent = "Selected pickup location: " + label;
+        selectedLocation.hidden = false;
+        showLocationMessage("Pickup location selected.", "success");
+    }
+
+    async function reverseGeocode(lat, lon) {
+        const url = new URL("https://nominatim.openstreetmap.org/reverse");
+        url.searchParams.set("format", "jsonv2");
+        url.searchParams.set("lat", lat);
+        url.searchParams.set("lon", lon);
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Address lookup failed.");
+
+        const data = await response.json();
+
+        if (data.address) {
+            const a = data.address;
+
+            if (!locationInput.value) {
+                locationInput.value =
+                    a.suburb || a.neighbourhood || a.city ||
+                    a.town || a.village || a.county || "";
+            }
+
+            if (a.postcode && !pinInput.value) {
+                pinInput.value = a.postcode;
+            }
+        }
+
+        return data.display_name || "Selected map location";
+    }
+
+    async function searchAddress(query) {
+        const url = new URL("https://nominatim.openstreetmap.org/search");
+        url.searchParams.set("format", "jsonv2");
+        url.searchParams.set("q", query);
+        url.searchParams.set("limit", "1");
+        url.searchParams.set("countrycodes", "in");
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Location search failed.");
+        return response.json();
+    }
+
+    function initializeMap() {
+        if (map || typeof L === "undefined") return;
+
+        map = L.map("locationMap").setView([22.9734, 78.6569], 5);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(map);
+
+        map.on("click", async function (event) {
+            const lat = event.latlng.lat;
+            const lon = event.latlng.lng;
+
+            if (marker) marker.setLatLng(event.latlng);
+            else marker = L.marker(event.latlng).addTo(map);
+
+            showLocationMessage("Finding address...", "");
+
+            try {
+                const address = await reverseGeocode(lat, lon);
+                setLocation(address, lat, lon);
+            } catch (error) {
+                setLocation("Selected map point", lat, lon);
+                showLocationMessage(
+                    "Coordinates selected. Enter area and PIN manually.",
+                    "error"
+                );
+            }
+        });
+    }
+
+    function openMap(lat, lon, zoom) {
+        mapPanel.hidden = false;
+        showMapBtn.hidden = true;
+        hideMapBtn.hidden = false;
+
+        initializeMap();
+
+        if (!map) {
+            showLocationMessage("Map could not load. Check internet.", "error");
+            return;
+        }
+
+        map.setView([lat, lon], zoom || 15);
+
+        if (marker) marker.setLatLng([lat, lon]);
+        else marker = L.marker([lat, lon]).addTo(map);
+
+        setTimeout(function () {
+            map.invalidateSize();
+        }, 100);
+    }
+
+    currentBtn.addEventListener("click", function () {
+        if (!navigator.geolocation) {
+            showLocationMessage("GPS is not supported by this browser.", "error");
+            return;
+        }
+
+        currentBtn.disabled = true;
+        showLocationMessage("Requesting GPS permission...", "");
+
+        navigator.geolocation.getCurrentPosition(
+            async function (position) {
+                currentBtn.disabled = false;
+                manualPanel.hidden = false;
+
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                try {
+                    const address = await reverseGeocode(lat, lon);
+                    setLocation(address, lat, lon);
+                } catch (error) {
+                    setLocation("Current GPS location", lat, lon);
+                }
+
+                openMap(lat, lon, 15);
+            },
+            function (error) {
+                currentBtn.disabled = false;
+                showLocationMessage(
+                    error.code === error.PERMISSION_DENIED
+                        ? "Location permission denied. Choose another location."
+                        : "Could not detect location. Please try again.",
+                    "error"
+                );
+            },
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+        );
+    });
+
+    anotherBtn.addEventListener("click", function () {
+        manualPanel.hidden = false;
+        locationInput.required = true;
+        pinInput.required = true;
+        directionsInput.required = true;
+        clearCoordinates();
+        showLocationMessage(
+            "Enter city/area and PIN, then search or select on map.",
+            ""
+        );
+        locationInput.focus();
+    });
+
+    searchBtn.addEventListener("click", async function () {
+        const area = locationInput.value.trim();
+        const pin = pinInput.value.trim();
+
+        if (area.length < 3) {
+            showLocationMessage("Enter a city or area.", "error");
+            return;
+        }
+
+        if (!/^[0-9]{6}$/.test(pin)) {
+            showLocationMessage("Enter a valid 6-digit PIN code.", "error");
+            return;
+        }
+
+        showLocationMessage("Searching location...", "");
+
+        try {
+            const results = await searchAddress(area + ", " + pin + ", India");
+
+            if (!results.length) {
+                showLocationMessage(
+                    "Location not found. Check area and PIN.",
+                    "error"
+                );
+                return;
+            }
+
+            const result = results[0];
+            const lat = Number(result.lat);
+            const lon = Number(result.lon);
+
+            setLocation(result.display_name, lat, lon);
+            openMap(lat, lon, 15);
+        } catch (error) {
+            showLocationMessage(error.message, "error");
+        }
+    });
+
+    showMapBtn.addEventListener("click", function () {
+        openMap(22.9734, 78.6569, 5);
+    });
+
+    hideMapBtn.addEventListener("click", function () {
+        mapPanel.hidden = true;
+        showMapBtn.hidden = false;
+        hideMapBtn.hidden = true;
+    });
+
+    locationInput.addEventListener("input", clearCoordinates);
+    pinInput.addEventListener("input", clearCoordinates);
+
+    imageInput.addEventListener("change", function () {
+        imagePreview.replaceChildren();
+
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        previewUrl = null;
+
+        const file = imageInput.files[0];
+        if (!file) return;
+
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)
+                || file.size > 5 * 1024 * 1024) {
+            showMessage("Choose a JPEG, PNG or WebP image under 5 MB.", "danger");
+            imageInput.value = "";
+            return;
+        }
+
+        previewUrl = URL.createObjectURL(file);
+
+        const img = document.createElement("img");
+        img.src = previewUrl;
+        img.alt = "Item photo preview";
+        img.className = "preview-image";
+        imagePreview.appendChild(img);
+        message.style.display = "none";
+    });
+
+    form.addEventListener("submit", function (event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            form.reportValidity();
+            return;
+        }
+
+        if (!locationSelected || !latInput.value || !lonInput.value) {
+            event.preventDefault();
+            showMessage(
+                "Please select a pickup point using GPS or the map.",
+                "warning"
+            );
+            return;
+        }
+
+        if (!/^[0-9]{6}$/.test(pinInput.value.trim())) {
+            event.preventDefault();
+            showMessage("Please enter a valid 6-digit PIN code.", "warning");
+            pinInput.focus();
+            return;
+        }
+
+        if (directionsInput.value.trim().length < 5) {
+            event.preventDefault();
+            showMessage("Please enter useful pickup directions.", "warning");
+            directionsInput.focus();
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Saving listing...";
+    });
+
+    form.addEventListener("reset", function () {
+        setTimeout(function () {
+            imagePreview.replaceChildren();
+
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+            previewUrl = null;
+
+            message.style.display = "none";
+            locationMessage.textContent = "";
+            selectedLocation.hidden = true;
+            manualPanel.hidden = true;
+            mapPanel.hidden = true;
+            showMapBtn.hidden = false;
+            hideMapBtn.hidden = true;
+
+            clearCoordinates();
+
+            if (map && marker) {
+                map.removeLayer(marker);
+                marker = null;
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML =
+                'Save Listing <i class="bi bi-arrow-right ms-1"></i>';
+        }, 0);
+    });
+});
+</script>
+
+</body>
+</html>

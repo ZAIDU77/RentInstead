@@ -1,0 +1,1098 @@
+﻿<!-- ```html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Items | RentInstead</title>
+
+    <link rel="icon" type="image/svg+xml" href="/RentInstead/favicon.svg">
+    <base href="../../">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Leaflet map -->
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            color: #172554;
+            font-family: 'DM Sans', Arial, sans-serif;
+        }
+
+        .browse-page {
+            min-height: 75vh;
+            padding: 42px 0 70px;
+        }
+
+        .browse-heading h1 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+        }
+
+        .browse-heading p {
+            color: #64748b;
+        }
+
+        .browse-search {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .browse-search input {
+            width: 100%;
+            min-width: 0;
+            border: 0;
+            outline: 0;
+        }
+
+        /* Location section */
+        .location-panel {
+            margin-bottom: 28px;
+            padding: 22px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 8px 24px #0f172a08;
+        }
+
+        .location-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .location-actions .btn {
+            min-height: 44px;
+            border-radius: 9px;
+            font-weight: 600;
+        }
+
+        .manual-location-search {
+            display: flex;
+            gap: 10px;
+        }
+
+        .manual-location-search input {
+            min-width: 0;
+        }
+
+        .selected-location {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 11px 13px;
+            border-radius: 9px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            overflow-wrap: anywhere;
+        }
+
+        #locationMessage {
+            overflow-wrap: anywhere;
+        }
+
+        #locationMessage.error { color: #b91c1c; }
+        #locationMessage.success { color: #15803d; }
+
+        #locationMap {
+            width: 100%;
+            height: 320px;
+            margin-top: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            z-index: 1;
+        }
+
+        .map-help {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* Categories */
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+
+        .category-btn {
+            padding: 9px 17px;
+            border: 1px solid #e2e8f0;
+            border-radius: 25px;
+            background: white;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .category-btn.active,
+        .category-btn:hover {
+            border-color: #1d4ed8;
+            background: #1d4ed8;
+            color: white;
+        }
+
+        /* Item cards */
+        .browse-card {
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .browse-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px #0f172a12;
+        }
+
+        .item-image {
+            position: relative;
+            display: flex;
+            height: 180px;
+            align-items: center;
+            justify-content: center;
+            background: #eef2ff;
+        }
+
+        .item-image > i {
+            color: #1d4ed8;
+            font-size: 65px;
+        }
+
+        .item-category {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: white;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 50%;
+            background: white;
+            color: #475569;
+        }
+
+        .wishlist-btn.active { color: #dc2626; }
+
+        .item-details { padding: 16px; }
+
+        .item-details h3 {
+            color: #172554;
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+        .item-location {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .item-price {
+            color: #1d4ed8;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .item-price small {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .availability {
+            padding: 5px 8px;
+            border-radius: 6px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 11px;
+        }
+
+        .view-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            border: 0;
+            border-radius: 9px;
+            background: #1d4ed8;
+            color: white;
+            font-weight: 700;
+        }
+
+        .view-btn:hover { background: #1e40af; }
+
+        .empty-state {
+            display: none;
+            padding: 55px 15px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .empty-state i { font-size: 45px; }
+
+        @media (max-width: 576px) {
+            .browse-page { padding: 30px 0 45px; }
+            .item-image { height: 145px; }
+            .item-image > i { font-size: 52px; }
+            .item-details { padding: 12px; }
+
+            .location-panel { padding: 16px; }
+            .location-actions { flex-direction: column; }
+            .location-actions .btn { width: 100%; }
+            .manual-location-search { flex-direction: column; }
+            #locationMap { height: 270px; }
+        }
+    </style>
+</head>
+
+<body>
+<header id="siteNavbar"></header>
+
+<main class="browse-page">
+    <div class="container">
+
+        <div class="browse-heading">
+            <h1>Find what you need.</h1>
+            <p>Rent useful items from people around your campus.</p>
+        </div>
+
+        <!-- Item search -->
+        <form class="browse-search" id="browseSearchForm">
+            <i class="bi bi-search"></i>
+            <input type="search" id="itemSearch"
+                   placeholder="Search books, cameras, cycles, laptops..."
+                   aria-label="Search rental items">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+
+        <!-- Location selector -->
+        <section class="location-panel" aria-labelledby="locationTitle">
+            <h2 id="locationTitle" class="h5 fw-bold mb-2">
+                <i class="bi bi-geo-alt-fill text-primary"></i>
+                Find items near you
+            </h2>
+
+            <p class="text-secondary small mb-3">
+                Use your current location or choose another place.
+            </p>
+
+            <div class="location-actions">
+                <button type="button" id="currentLocationBtn"
+                        class="btn btn-primary">
+                    <i class="bi bi-crosshair"></i>
+                    Use Current Location
+                </button>
+
+                <button type="button" id="chooseLocationBtn"
+                        class="btn btn-outline-primary">
+                    <i class="bi bi-map"></i>
+                    Choose Another Location
+                </button>
+            </div>
+
+            <div id="manualLocationPanel" class="mt-3" hidden>
+                <label for="manualLocationInput" class="form-label fw-semibold">
+                    Search city, area or PIN code
+                </label>
+
+                <div class="manual-location-search">
+                    <input type="text" id="manualLocationInput"
+                           class="form-control"
+                           placeholder="e.g. Bilaspur, Civil Lines, 495001"
+                           maxlength="150">
+                    <button type="button" id="searchLocationBtn"
+                            class="btn btn-dark">
+                        Search
+                    </button>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <button type="button" id="showMapBtn"
+                            class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-map"></i> Choose on Map
+                    </button>
+                    <button type="button" id="hideMapBtn"
+                            class="btn btn-sm btn-outline-secondary"
+                            hidden>
+                        Hide Map
+                    </button>
+                </div>
+
+                <p class="map-help mt-2 mb-0">
+                    Search a place or open the map and click your preferred
+                    pickup/search location.
+                </p>
+
+                <div id="locationMapPanel" hidden>
+                    <div id="locationMap"></div>
+                </div>
+            </div>
+
+            <div id="locationMessage" class="small mt-3"
+                 role="status" aria-live="polite"></div>
+
+            <div id="selectedLocation" class="selected-location mt-3"
+                 hidden>
+                <i class="bi bi-geo-alt-fill"></i>
+                <span id="selectedLocationText"></span>
+                <button type="button" id="clearLocationBtn"
+                        class="btn btn-sm btn-link ms-auto">
+                    Clear
+                </button>
+            </div>
+        </section>
+
+        <!-- Category filters -->
+        <div class="category-buttons" id="categoryButtons">
+            <button class="category-btn active" data-category="all" type="button">All Items</button>
+            <button class="category-btn" data-category="Books" type="button">Books</button>
+            <button class="category-btn" data-category="Cameras" type="button">Cameras</button>
+            <button class="category-btn" data-category="Cycles" type="button">Cycles</button>
+            <button class="category-btn" data-category="Laptops" type="button">Laptops</button>
+            <button class="category-btn" data-category="Other" type="button">Other</button>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 fw-bold mb-0">Available items</h2>
+            <span id="itemsCount" class="text-secondary small"></span>
+        </div>
+
+        <!-- Items loaded from MySQL -->
+<div class="row g-4" id="itemsGrid">
+<div class="col-6 col-lg-3 item-column"
+     data-category="Cycles"
+     data-name="student bicycle cycle">
+    <article class="browse-card">
+        <div class="item-image">
+            <span class="item-category">Cycles</span>
+            <i class="bi bi-bicycle"></i>
+        </div>
+        <div class="item-details">
+            <h3>Student Bicycle</h3>
+            <p class="item-location">
+                <i class="bi bi-geo-alt"></i> Available for students
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="item-price">₹100 <small>/day</small></span>
+                <span class="availability">Available</span>
+            </div>
+            <button class="view-btn" type="button"
+                    onclick="alert('Student Bicycle rent: ₹100 per day. Booking connection is the next step.')">
+                Rent Now
+            </button>
+        </div>
+    </article>
+</div>
+</div>
+
+<div class="empty-state" id="emptyState">
+            <i class="bi bi-search"></i>
+            <h3 class="h5 mt-3">No items found</h3>
+            <p>Try another search or select a different category.</p>
+        </div>
+    </div>
+</main>
+
+<footer class="text-center py-4 bg-white border-top">
+    <p class="mb-0 text-secondary small">
+        Â© 2026 RentInstead. Access instead of ownership.
+    </p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/navbar.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("itemSearch");
+    const searchForm = document.getElementById("browseSearchForm");
+    const categoryButtons = document.querySelectorAll(".category-btn");
+    
+    const itemsCount = document.getElementById("itemsCount");
+    const emptyState = document.getElementById("emptyState");
+
+    const currentLocationBtn = document.getElementById("currentLocationBtn");
+    const chooseLocationBtn = document.getElementById("chooseLocationBtn");
+    const manualLocationPanel = document.getElementById("manualLocationPanel");
+    const manualLocationInput = document.getElementById("manualLocationInput");
+    const searchLocationBtn = document.getElementById("searchLocationBtn");
+    const locationMessage = document.getElementById("locationMessage");
+    const selectedLocation = document.getElementById("selectedLocation");
+    const selectedLocationText = document.getElementById("selectedLocationText");
+    const clearLocationBtn = document.getElementById("clearLocationBtn");
+    const showMapBtn = document.getElementById("showMapBtn");
+    const hideMapBtn = document.getElementById("hideMapBtn");
+    const locationMapPanel = document.getElementById("locationMapPanel");
+
+    let selectedCategory = "all";
+    let chosenCoordinates = null;
+    let map = null;
+    let mapMarker = null;
+    let locationRequestId = 0;
+
+    const params = new URLSearchParams(window.location.search);
+    searchInput.value = params.get("q") || "";
+
+    async function loadDatabaseItems() {
+    const grid = document.getElementById("itemsGrid");
+    const emptyState = document.getElementById("emptyState");
+    const itemsCount = document.getElementById("itemsCount");
+
+    grid.replaceChildren();
+    itemsCount.textContent = "Loading items...";
+
+    try {
+        const apiURL = new URL("browse-items", document.baseURI);
+        const response = await fetch(apiURL.toString(), {
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) {
+            throw new Error("Server returned HTTP " + response.status);
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+            throw new Error("API did not return an item list.");
+        }
+
+        data.forEach(function (item) {
+            const column = document.createElement("div");
+            column.className = "col-6 col-lg-3 item-column";
+            column.dataset.category = item.category || "Other";
+            column.dataset.name = item.title || "";
+
+            const card = document.createElement("article");
+            card.className = "browse-card";
+
+            const imagePanel = document.createElement("div");
+            imagePanel.className = "item-image";
+
+            const category = document.createElement("span");
+            category.className = "item-category";
+            category.textContent = item.category || "Other";
+            imagePanel.appendChild(category);
+
+            if (item.image) {
+                const img = document.createElement("img");
+                img.src = item.image;
+                img.alt = item.title || "Rental item";
+                img.loading = "lazy";
+                img.style.cssText =
+                    "width:100%;height:100%;object-fit:contain;padding:12px";
+
+                img.onerror = function () {
+                    img.remove();
+                    const icon = document.createElement("i");
+                    icon.className = "bi bi-box-seam";
+                    imagePanel.appendChild(icon);
+                };
+
+                imagePanel.appendChild(img);
+            } else {
+                const icon = document.createElement("i");
+                icon.className = "bi bi-box-seam";
+                imagePanel.appendChild(icon);
+            }
+
+            const details = document.createElement("div");
+            details.className = "item-details";
+
+            const title = document.createElement("h3");
+            title.textContent = item.title || "Untitled item";
+
+            const location = document.createElement("p");
+            location.className = "item-location";
+            location.textContent =
+                item.location || item.pincode || "Location not specified";
+
+            const priceRow = document.createElement("div");
+            priceRow.className =
+                "d-flex justify-content-between align-items-center gap-1 flex-wrap";
+
+            const price = document.createElement("span");
+            price.className = "item-price";
+            price.textContent = "â‚¹" + (item.price ?? 0) + " ";
+
+            const perDay = document.createElement("small");
+            perDay.textContent = "/day";
+            price.appendChild(perDay);
+
+            const availability = document.createElement("span");
+            availability.className = "availability";
+            availability.textContent = "Available";
+
+            priceRow.append(price, availability);
+
+            const view = document.createElement("button");
+            view.className = "view-btn";
+            view.type = "button";
+            view.textContent = "View details";
+
+            view.addEventListener("click", function () {
+                if (!item.id) {
+                    alert("Database response mein item ID missing hai.");
+                    return;
+                }
+
+                const detailsURL = new URL("item-details", document.baseURI);
+                detailsURL.searchParams.set("id", item.id);
+                window.location.href = detailsURL.toString();
+            });
+
+            const wishlist = document.createElement("button");
+            wishlist.className = "wishlist-btn";
+            wishlist.type = "button";
+            wishlist.setAttribute("aria-label", "Add to wishlist");
+
+            const heart = document.createElement("i");
+            heart.className = "bi bi-heart";
+            wishlist.appendChild(heart);
+
+            wishlist.addEventListener("click", function () {
+                const active = wishlist.classList.toggle("active");
+                heart.className = active ? "bi bi-heart-fill" : "bi bi-heart";
+            });
+
+            imagePanel.appendChild(wishlist);
+            details.append(title, location, priceRow, view);
+            card.append(imagePanel, details);
+            column.appendChild(card);
+            grid.appendChild(column);
+        });
+
+        itemsCount.textContent =
+            data.length + (data.length === 1 ? " item" : " items");
+
+        filterItems();
+
+    } catch (error) {
+        console.error("Browse items loading failed:", error);
+        itemsCount.textContent = "Items could not be loaded";
+        emptyState.style.display = "block";
+        emptyState.querySelector("h3").textContent = "Unable to load items";
+        emptyState.querySelector("p").textContent =
+            "Check the browse-items API and MySQL database connection.";
+    }
+}
+function filterItems() {
+        const items = document.querySelectorAll('.item-column');
+        const query = searchInput.value.trim().toLowerCase();
+        let count = 0;
+
+        items.forEach(function (item) {
+            const name = (item.dataset.name || "").toLowerCase();
+            const title = item.querySelector("h3").textContent.toLowerCase();
+            const category = item.dataset.category;
+
+            const matchesSearch = !query ||
+                name.includes(query) ||
+                title.includes(query) ||
+                category.toLowerCase().includes(query);
+
+            const matchesCategory =
+                selectedCategory === "all" ||
+                category === selectedCategory;
+
+            const visible = matchesSearch && matchesCategory;
+            item.style.display = visible ? "" : "none";
+
+            if (visible) count++;
+        });
+
+        itemsCount.textContent = count + (count === 1 ? " item" : " items");
+        emptyState.style.display = count === 0 ? "block" : "none";
+    }
+
+    function showLocationMessage(message, type) {
+        locationMessage.textContent = message;
+        locationMessage.className = "small mt-3" + (type ? " " + type : "");
+    }
+
+    function saveLocation(label, latitude, longitude) {
+        chosenCoordinates = {
+            latitude: latitude,
+            longitude: longitude,
+            label: label
+        };
+
+        selectedLocationText.textContent =
+            label + " (" + latitude.toFixed(5) + ", " +
+            longitude.toFixed(5) + ")";
+
+        selectedLocation.hidden = false;
+
+        // Store only this browser's chosen location for this page.
+        // This does not save the location to the server/database.
+        showLocationMessage("Location selected successfully.", "success");
+
+        // Make the chosen coordinates available to future integrations.
+        window.rentInsteadSelectedLocation = { ...chosenCoordinates };
+    }
+
+    async function reverseGeocode(latitude, longitude) {
+        const url = new URL("https://nominatim.openstreetmap.org/reverse");
+        url.searchParams.set("format", "jsonv2");
+        url.searchParams.set("lat", latitude);
+        url.searchParams.set("lon", longitude);
+
+        const response = await fetch(url.toString(), {
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) {
+            throw new Error("Could not find the address for these coordinates.");
+        }
+
+        const data = await response.json();
+        return data.display_name || "Selected map location";
+    }
+
+    async function searchAddress(query) {
+        const url = new URL("https://nominatim.openstreetmap.org/search");
+        url.searchParams.set("format", "jsonv2");
+        url.searchParams.set("q", query);
+        url.searchParams.set("limit", "5");
+        url.searchParams.set("addressdetails", "1");
+
+        const response = await fetch(url.toString(), {
+            headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) {
+            throw new Error("Location search is temporarily unavailable.");
+        }
+
+        return response.json();
+    }
+
+    async function chooseCoordinates(latitude, longitude, knownLabel) {
+        try {
+            showLocationMessage("Finding location address...", "");
+
+            const label = knownLabel ||
+                await reverseGeocode(latitude, longitude);
+
+            saveLocation(label, latitude, longitude);
+
+            if (map) {
+                map.setView([latitude, longitude], 15);
+
+                if (mapMarker) {
+                    mapMarker.setLatLng([latitude, longitude]);
+                } else {
+                    mapMarker = L.marker([latitude, longitude]).addTo(map);
+                }
+            }
+        } catch (error) {
+            // GPS coordinates can still be selected if address lookup fails.
+            if (!knownLabel) {
+                saveLocation("Selected location", latitude, longitude);
+                showLocationMessage(
+                    "Coordinates selected, but the address could not be loaded.",
+                    "error"
+                );
+            } else {
+                showLocationMessage(error.message, "error");
+            }
+        }
+    }
+
+    currentLocationBtn.addEventListener("click", function () {
+        if (!navigator.geolocation) {
+            showLocationMessage(
+                "Your browser does not support GPS location.",
+                "error"
+            );
+            return;
+        }
+
+        currentLocationBtn.disabled = true;
+        showLocationMessage(
+            "Requesting location permission. Please allow access in your browser.",
+            ""
+        );
+
+        navigator.geolocation.getCurrentPosition(
+            async function (position) {
+                currentLocationBtn.disabled = false;
+
+                await chooseCoordinates(
+                    position.coords.latitude,
+                    position.coords.longitude
+                );
+
+                if (map) {
+                    locationMapPanel.hidden = false;
+                    hideMapBtn.hidden = false;
+                    showMapBtn.hidden = true;
+                    setTimeout(function () { map.invalidateSize(); }, 100);
+                }
+            },
+            function (error) {
+                currentLocationBtn.disabled = false;
+
+                let message = "Could not detect your location.";
+
+                if (error.code === error.PERMISSION_DENIED) {
+                    message = "Location permission denied. Allow location access or choose another place.";
+                } else if (error.code === error.POSITION_UNAVAILABLE) {
+                    message = "Your current location is unavailable. Try again or choose another place.";
+                } else if (error.code === error.TIMEOUT) {
+                    message = "Location request timed out. Please try again.";
+                }
+
+                showLocationMessage(message, "error");
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 60000
+            }
+        );
+    });
+
+    chooseLocationBtn.addEventListener("click", function () {
+        manualLocationPanel.hidden = false;
+        manualLocationInput.focus();
+        showLocationMessage(
+            "Search a city, area or PIN code, or select a point on the map.",
+            ""
+        );
+    });
+
+    async function performLocationSearch() {
+        const query = manualLocationInput.value.trim();
+
+        if (query.length < 2) {
+            showLocationMessage("Enter a city, area or PIN code.", "error");
+            return;
+        }
+
+        searchLocationBtn.disabled = true;
+        showLocationMessage("Searching for location...", "");
+
+        try {
+            const results = await searchAddress(query);
+
+            if (!results.length) {
+                showLocationMessage(
+                    "No matching place found. Try a different search.",
+                    "error"
+                );
+                return;
+            }
+
+            if (results.length > 1) {
+                showLocationMessage(
+                    "Several places were found. The first match is selected; use the map to choose another place.",
+                    ""
+                );
+            }
+
+            const result = results[0];
+            const latitude = Number(result.lat);
+            const longitude = Number(result.lon);
+
+            await chooseCoordinates(
+                latitude,
+                longitude,
+                result.display_name
+            );
+
+            openMapAt(latitude, longitude);
+        } catch (error) {
+            showLocationMessage(
+                error.message || "Location search failed. Try again.",
+                "error"
+            );
+        } finally {
+            searchLocationBtn.disabled = false;
+        }
+    }
+
+    searchLocationBtn.addEventListener("click", performLocationSearch);
+
+    manualLocationInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            performLocationSearch();
+        }
+    });
+
+    function initializeMap() {
+        if (map) return;
+
+        if (typeof L === "undefined") {
+            showLocationMessage("Map library could not be loaded.", "error");
+            return;
+        }
+
+        // Initial view is a general India view, not the user's location.
+        map = L.map("locationMap").setView([22.9734, 78.6569], 5);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        map.on("click", async function (event) {
+            const latitude = event.latlng.lat;
+            const longitude = event.latlng.lng;
+
+            if (mapMarker) {
+                mapMarker.setLatLng(event.latlng);
+            } else {
+                mapMarker = L.marker(event.latlng).addTo(map);
+            }
+
+            await chooseCoordinates(latitude, longitude);
+        });
+    }
+
+    function openMapAt(latitude, longitude) {
+        locationMapPanel.hidden = false;
+        showMapBtn.hidden = true;
+        hideMapBtn.hidden = false;
+
+        initializeMap();
+
+        if (map) {
+            map.setView([latitude, longitude], 15);
+
+            if (mapMarker) {
+                mapMarker.setLatLng([latitude, longitude]);
+            } else {
+                mapMarker = L.marker([latitude, longitude]).addTo(map);
+            }
+
+            setTimeout(function () { map.invalidateSize(); }, 100);
+        }
+    }
+
+    showMapBtn.addEventListener("click", function () {
+        locationMapPanel.hidden = false;
+        showMapBtn.hidden = true;
+        hideMapBtn.hidden = false;
+
+        initializeMap();
+
+        if (map) {
+            setTimeout(function () { map.invalidateSize(); }, 100);
+        }
+    });
+
+    hideMapBtn.addEventListener("click", function () {
+        locationMapPanel.hidden = true;
+        hideMapBtn.hidden = true;
+        showMapBtn.hidden = false;
+    });
+
+    clearLocationBtn.addEventListener("click", function () {
+        chosenCoordinates = null;
+        selectedLocation.hidden = true;
+        selectedLocationText.textContent = "";
+        showLocationMessage("Selected location cleared.", "");
+
+        window.rentInsteadSelectedLocation = null;
+
+        if (mapMarker && map) {
+            map.removeLayer(mapMarker);
+            mapMarker = null;
+        }
+    });
+
+    categoryButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            categoryButtons.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+
+            button.classList.add("active");
+            selectedCategory = button.dataset.category;
+            filterItems();
+        });
+    });
+
+    searchInput.addEventListener("input", filterItems);
+
+    searchForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        filterItems();
+    });
+
+    document.querySelectorAll(".wishlist-btn").forEach(function (button) {
+        button.addEventListener("click", function () {
+            const active = button.classList.toggle("active");
+
+            button.querySelector("i").className =
+                active ? "bi bi-heart-fill" : "bi bi-heart";
+        });
+    });
+
+    function openBookingForm(button) {
+    const card = button.closest(".item-column");
+    if (!card) return;
+
+    const title = card.querySelector("h3")?.textContent.trim() || "Rental Item";
+    const priceText = card.querySelector(".item-price")?.textContent || "";
+    const match = priceText.replace(/,/g, "").match(/[\d]+(?:\.\d+)?/);
+    const price = match ? Number(match[0]) : 0;
+
+    let modal = document.getElementById("rentBookingModal");
+
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "rentBookingModal";
+        modal.style.cssText = "position:fixed;inset:0;background:#0f172abf;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto";
+        modal.innerHTML = `
+          <div style="background:white;width:min(520px,100%);max-height:95vh;overflow:auto;border-radius:18px;padding:24px;color:#172033">
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+              <h2 style="font-size:24px;margin:0">Book Rental Item</h2>
+              <button type="button" id="closeRentModal" style="border:0;background:#eef2ff;border-radius:8px;padding:8px 12px">âœ•</button>
+            </div>
+            <h3 id="rentItemTitle" style="font-size:18px;margin:18px 0 5px"></h3>
+            <p style="color:#1d4ed8;font-weight:700">Rent: â‚¹<span id="rentDailyPrice"></span> / day</p>
+            <form id="rentBookingForm">
+              <label for="rentPickup" style="display:block;margin-top:14px;font-weight:600">Pickup Location</label>
+              <input id="rentPickup" required maxlength="250" placeholder="Enter pickup location" style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px">
+              <label for="rentStart" style="display:block;margin-top:14px;font-weight:600">Rental Start Date</label>
+              <input type="date" id="rentStart" required style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px">
+              <label for="rentEnd" style="display:block;margin-top:14px;font-weight:600">Return Date</label>
+              <input type="date" id="rentEnd" required style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px">
+              <button type="submit" style="width:100%;margin-top:20px;padding:13px;border:0;border-radius:9px;background:#1d4ed8;color:white;font-weight:700">Calculate Rent & Generate UPI QR</button>
+            </form>
+            <div id="rentPaymentArea" hidden style="margin-top:22px;text-align:center;border-top:1px solid #e2e8f0;padding-top:18px">
+              <h3 style="font-size:20px">UPI Payment</h3>
+              <p>Rental days: <strong id="rentDays"></strong></p>
+              <p style="font-size:24px;color:#1d4ed8;font-weight:800">Total: â‚¹<span id="rentTotal"></span></p>
+              <p style="overflow-wrap:anywhere">UPI ID: <strong>9140159897@ibl</strong></p>
+              <img id="rentQrImage" alt="UPI payment QR code" style="width:220px;height:220px;max-width:100%;object-fit:contain">
+              <a id="rentOpenUpi" href="#" style="display:block;padding:12px;background:#15803d;color:white;border-radius:8px;text-decoration:none;font-weight:700">Open UPI App</a>
+              <p style="font-size:12px;color:#64748b;margin-top:12px">Payment is not automatically verified. This demo does not save a booking or confirm payment.</p>
+            </div>
+          </div>`;
+        document.body.appendChild(modal);
+
+        document.getElementById("closeRentModal").addEventListener("click", function () {
+            modal.style.display = "none";
+        });
+
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) modal.style.display = "none";
+        });
+
+        document.getElementById("rentBookingForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const start = document.getElementById("rentStart").value;
+            const end = document.getElementById("rentEnd").value;
+            const pickup = document.getElementById("rentPickup").value.trim();
+
+            if (!pickup || !start || !end) {
+                alert("Pickup location aur dono dates bharo.");
+                return;
+            }
+
+            if (end <= start) {
+                alert("Return date, start date ke baad ki honi chahiye.");
+                return;
+            }
+
+            const startParts = start.split("-").map(Number);
+            const endParts = end.split("-").map(Number);
+            const days = Math.round((
+                Date.UTC(endParts[0], endParts[1] - 1, endParts[2]) -
+                Date.UTC(startParts[0], startParts[1] - 1, startParts[2])
+            ) / 86400000);
+
+            if (days < 1 || days > 365) {
+                alert("Rental period 1 se 365 din ke beech select karo.");
+                return;
+            }
+
+            const currentPrice = Number(modal.dataset.dailyPrice || 0);
+            const amount = (currentPrice * days).toFixed(2);
+            const upiId = "9140159897@ibl";
+            const upiLink = "upi://pay?" + new URLSearchParams({
+                pa: upiId,
+                pn: "RentInstead",
+                am: amount,
+                cu: "INR",
+                tn: "RentInstead rental"
+            }).toString();
+
+            document.getElementById("rentDays").textContent = days;
+            document.getElementById("rentTotal").textContent = amount;
+            document.getElementById("rentQrImage").src =
+                "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" +
+                encodeURIComponent(upiLink);
+            document.getElementById("rentOpenUpi").href = upiLink;
+            document.getElementById("rentPaymentArea").hidden = false;
+        });
+    }
+
+    modal.dataset.dailyPrice = String(price);
+    document.getElementById("rentItemTitle").textContent = title;
+    document.getElementById("rentDailyPrice").textContent = String(price);
+
+    const today = new Date();
+    const minDate = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, "0"),
+        String(today.getDate()).padStart(2, "0")
+    ].join("-");
+
+    const startInput = document.getElementById("rentStart");
+    const endInput = document.getElementById("rentEnd");
+    startInput.min = minDate;
+    endInput.min = minDate;
+    startInput.value = "";
+    endInput.value = "";
+    document.getElementById("rentPickup").value = "";
+    document.getElementById("rentPaymentArea").hidden = true;
+    modal.style.display = "flex";
+}
+
+document.querySelectorAll(".view-btn").forEach(function (button) {
+    button.addEventListener("click", function () {
+        openBookingForm(button);
+    });
+});
+
+filterItems();
+});
+</script>
+</body>
+</html>
+

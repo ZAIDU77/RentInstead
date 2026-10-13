@@ -1,0 +1,25 @@
+target/
+.env
+.env.*
+!.env.example
+*.log
+.idea/
+.vscode/
+
+# Local Tomcat installation
+/apache-tomcat-9.0.122/
+
+# Local backup files
+/PaymentDAO-backup.txt
+
+# Build output
+/target/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Backup files
+*.backup
+*.bak

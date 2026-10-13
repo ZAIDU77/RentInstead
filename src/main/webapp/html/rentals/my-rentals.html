@@ -1,0 +1,494 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Rentals | RentInstead</title>
+
+    <base href="../../">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            background: #f5f7fb;
+            color: #172554;
+        }
+
+        .page-header {
+            padding: 35px 0;
+            background: #eef2ff;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .page-header h1 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(28px, 4vw, 38px);
+            font-weight: 800;
+        }
+
+        .page-header p {
+            margin: 8px 0 0;
+            color: #64748b;
+        }
+
+        .rentals-page {
+            min-height: 65vh;
+            padding: 32px 0 60px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: white;
+        }
+
+        .stat-icon {
+            display: grid;
+            place-items: center;
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 21px;
+        }
+
+        .stat-card h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .stat-card p {
+            margin: 4px 0 0;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .rentals-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .rentals-toolbar h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .filter-select {
+            min-width: 150px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: white;
+            color: #334155;
+        }
+
+        .rental-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .rental-card {
+            display: grid;
+            grid-template-columns: 115px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            background: white;
+        }
+
+        .rental-image {
+            display: grid;
+            place-items: center;
+            width: 115px;
+            height: 115px;
+            border-radius: 12px;
+            background: #eef2ff;
+            color: #1d4ed8;
+            font-size: 43px;
+        }
+
+        .rental-info h3 {
+            margin-bottom: 7px;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .rental-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            margin: 10px 0;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .rental-price {
+            color: #1d4ed8;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-completed {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .rental-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            min-width: 120px;
+        }
+
+        .action-btn {
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: white;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .action-btn.primary {
+            border-color: #1d4ed8;
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .action-btn:hover { opacity: .88; }
+
+        .empty-state {
+            display: none;
+            padding: 55px 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            background: white;
+            text-align: center;
+        }
+
+        .empty-state i {
+            color: #94a3b8;
+            font-size: 48px;
+        }
+
+        .empty-state h3 {
+            margin-top: 15px;
+            font-weight: 800;
+        }
+
+        .empty-state p {
+            color: #64748b;
+        }
+
+        .browse-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 11px 17px;
+            border-radius: 9px;
+            background: #1d4ed8;
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .stats-grid { gap: 10px; }
+
+            .stat-card {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+                padding: 14px;
+            }
+
+            .rental-card {
+                grid-template-columns: 80px minmax(0, 1fr);
+                gap: 14px;
+                padding: 15px;
+            }
+
+            .rental-image {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+
+            .rental-actions {
+                grid-column: 1 / -1;
+                flex-direction: row;
+            }
+
+            .rental-actions button { flex: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+
+            .stat-card {
+                align-items: center;
+                flex-direction: row;
+            }
+
+            .rentals-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .filter-select { width: 100%; }
+
+            .rental-meta {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="/RentInstead/favicon.svg">
+</head>
+
+<body>
+    <header id="siteNavbar"></header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>My Rentals</h1>
+            <p>Keep track of your rental bookings in one place.</p>
+        </div>
+    </section>
+
+    <main class="rentals-page">
+        <div class="container">
+
+            <section class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-bag-check"></i></div>
+                    <div>
+                        <h2 id="totalCount">3</h2>
+                        <p>Total bookings</p>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+                    <div>
+                        <h2 id="activeCount">1</h2>
+                        <p>Active rentals</p>
+                    </div>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
+                    <div>
+                        <h2 id="completedCount">1</h2>
+                        <p>Completed rentals</p>
+                    </div>
+                </article>
+            </section>
+
+            <div class="rentals-toolbar">
+                <h2>Your bookings</h2>
+
+                <select id="statusFilter" class="filter-select" aria-label="Filter rentals">
+                    <option value="all">All bookings</option>
+                    <option value="Active">Active</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+
+            <section class="rental-list" id="rentalList">
+
+                <article class="rental-card" data-status="Active">
+                    <div class="rental-image">
+                        <i class="bi bi-laptop"></i>
+                    </div>
+
+                    <div class="rental-info">
+                        <span class="status status-active">Active</span>
+                        <h3 class="mt-2">HP Student Laptop</h3>
+
+                        <div class="rental-meta">
+                            <span><i class="bi bi-calendar3"></i> 10 Oct – 13 Oct 2026</span>
+                            <span><i class="bi bi-geo-alt"></i> Campus Block A</span>
+                        </div>
+
+                        <div class="rental-price">₹500 / day</div>
+                    </div>
+
+                    <div class="rental-actions">
+                        <button class="action-btn primary" type="button" data-action="details">View details</button>
+                        <button class="action-btn" type="button" data-action="help">Get help</button>
+                    </div>
+                </article>
+
+                <article class="rental-card" data-status="Pending">
+                    <div class="rental-image">
+                        <i class="bi bi-camera"></i>
+                    </div>
+
+                    <div class="rental-info">
+                        <span class="status status-pending">Pending</span>
+                        <h3 class="mt-2">Canon Digital Camera</h3>
+
+                        <div class="rental-meta">
+                            <span><i class="bi bi-calendar3"></i> 15 Oct – 16 Oct 2026</span>
+                            <span><i class="bi bi-geo-alt"></i> Student Housing</span>
+                        </div>
+
+                        <div class="rental-price">₹350 / day</div>
+                    </div>
+
+                    <div class="rental-actions">
+                        <button class="action-btn primary" type="button" data-action="details">View details</button>
+                        <button class="action-btn" type="button" data-action="help">Get help</button>
+                    </div>
+                </article>
+
+                <article class="rental-card" data-status="Completed">
+                    <div class="rental-image">
+                        <i class="bi bi-book-half"></i>
+                    </div>
+
+                    <div class="rental-info">
+                        <span class="status status-completed">Completed</span>
+                        <h3 class="mt-2">DSA Complete Guide</h3>
+
+                        <div class="rental-meta">
+                            <span><i class="bi bi-calendar3"></i> 2 Oct – 4 Oct 2026</span>
+                            <span><i class="bi bi-geo-alt"></i> Campus Library</span>
+                        </div>
+
+                        <div class="rental-price">₹20 / day</div>
+                    </div>
+
+                    <div class="rental-actions">
+                        <button class="action-btn primary" type="button" data-action="details">View details</button>
+                        <button class="action-btn" type="button" data-action="help">Get help</button>
+                    </div>
+                </article>
+
+            </section>
+
+            <section class="empty-state" id="emptyState">
+                <i class="bi bi-bag"></i>
+                <h3>No bookings found</h3>
+                <p>Try a different filter or explore items available for rent.</p>
+                <a href="html/items/browse.html" class="browse-btn">Browse items</a>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>© 2026 RentInstead. Access instead of ownership.</footer>
+
+    <script src="js/navbar.js"></script>
+
+    <script>
+        const rentalCards = Array.from(document.querySelectorAll(".rental-card"));
+        const statusFilter = document.getElementById("statusFilter");
+        const emptyState = document.getElementById("emptyState");
+
+        function updateRentals() {
+            const selectedStatus = statusFilter.value;
+            let visibleCount = 0;
+            let activeCount = 0;
+            let completedCount = 0;
+
+            rentalCards.forEach(function (card) {
+                const status = card.dataset.status;
+                const visible = selectedStatus === "all" || status === selectedStatus;
+
+                card.style.display = visible ? "grid" : "none";
+
+                if (visible) visibleCount++;
+                if (status === "Active") activeCount++;
+                if (status === "Completed") completedCount++;
+            });
+
+            document.getElementById("totalCount").textContent = rentalCards.length;
+            document.getElementById("activeCount").textContent = activeCount;
+            document.getElementById("completedCount").textContent = completedCount;
+
+            emptyState.style.display = visibleCount === 0 ? "block" : "none";
+        }
+
+        statusFilter.addEventListener("change", updateRentals);
+
+        document.querySelectorAll("[data-action]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                const card = button.closest(".rental-card");
+                const title = card.querySelector("h3").textContent;
+                const action = button.dataset.action;
+
+                if (action === "details") {
+                    alert(
+                        "Rental: " + title +
+                        "\nStatus: " + card.dataset.status +
+                        "\n\nThese are sample bookings. Real booking details will be loaded from the database later."
+                    );
+                } else {
+                    alert("Support requests will be connected to the backend later.");
+                }
+            });
+        });
+
+        updateRentals();
+    </script>
+</body>
+</html>
+```
