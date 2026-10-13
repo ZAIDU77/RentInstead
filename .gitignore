@@ -23,3 +23,7 @@ target/
 # Backup files
 *.backup
 *.bak
+
+# Backup files
+*.backup
+*.bak
