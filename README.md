@@ -1,2 +1,1 @@
-# RentInstead
-This is a RentInstead website 
+RentInstead – A Student Rental Marketplace that allows students to rent and lend items like books, laptops, cameras, and bicycles. Built using Java, JSP, Servlets, JDBC, MySQL, HTML, CSS, and JavaScript. **Access Instead of Ownership.**
